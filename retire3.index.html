@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>謝謝大家</title>
+  <style>
+    body{
+      margin:0; height:100vh; display:flex; align-items:center; justify-content:center;
+      font-family: system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background:#fff;
+    }
+    .card{
+      width:min(720px, 92vw);
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:18px;
+      padding:26px 22px;
+      text-align:center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.06);
+    }
+    h1{ margin:0; font-size: 28px; font-weight: 800; }
+    p{ margin:14px 0 0; font-size: 18px; line-height: 1.6; }
+    button{
+      margin-top:18px;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,.08);
+      background: rgba(0,0,0,.06);
+    }
+    .hint{ margin-top:10px; font-size: 14px; opacity: .65; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>謝謝大家的心意！</h1>
+    <p id="msg">我有一段話想對你說~</p>
+    <button id="btn">點一下</button>
+    <div class="hint">我始終相信每一段相遇都是緣分，各位都是我很珍惜的人</div>
+  </div>
+
+  <script>
+    const lines = [
+      "謝謝大家的心意🧧真的很感動。",
+      "小小玩笑：你們的祝福我都收到了——紅包我也「用心」收到了。",
+      "謝謝大家今天的到來與支持❤️"
+    ];
+    let i = 0;
+    document.getElementById("btn").addEventListener("click", () => {
+      i = (i + 1) % lines.length;
+      document.getElementById("msg").textContent = lines[i];
+    });
+  </script>
+</body>
+</html>
