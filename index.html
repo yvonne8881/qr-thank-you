@@ -6,7 +6,7 @@
   <title>謝謝大家</title>
   <style>
     body{
-      margin:0; height:100vh; display:flex; align-items:center; justify-content:center;
+      margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
       font-family: system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
       background:#fff;
     }
@@ -19,9 +19,28 @@
       box-shadow: 0 10px 30px rgba(0,0,0,.06);
     }
     h1{ margin:0; font-size: 28px; font-weight: 800; }
-    p{ margin:14px 0 0; font-size: 18px; line-height: 1.6; }
-    button{
+    p{ margin:14px 0 0; font-size: 18px; line-height: 1.75; }
+    .hint{ margin-top:12px; font-size: 14px; opacity: .65; line-height: 1.6; }
+    .row{ margin-top:16px; text-align:left; }
+    label{ display:block; font-size:14px; opacity:.8; margin-bottom:6px; }
+    input, textarea{
+      width:100%;
+      box-sizing:border-box;
+      border:1px solid rgba(0,0,0,.14);
+      border-radius:12px;
+      padding:12px 12px;
+      font-size:16px;
+      outline:none;
+    }
+    textarea{ min-height: 120px; resize: vertical; }
+    .btns{
       margin-top:18px;
+      display:flex;
+      gap:10px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    button{
       border: none;
       border-radius: 999px;
       padding: 12px 18px;
@@ -30,28 +49,141 @@
       box-shadow: 0 8px 20px rgba(0,0,0,.08);
       background: rgba(0,0,0,.06);
     }
-    .hint{ margin-top:10px; font-size: 14px; opacity: .65; }
+    button.primary{ background: rgba(0,0,0,.10); }
+    button:disabled{ opacity:.5; cursor:not-allowed; }
+    .status{ margin-top:12px; font-size: 14px; opacity:.75; }
+    .page{ display:none; }
+    .page.active{ display:block; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>謝謝大家的心意！</h1>
-    <p id="msg">我有一段話想對你說~</p>
-    <button id="btn">點一下</button>
-    <div class="hint">我始終相信每一段相遇都是緣分，各位都是我很珍惜的人</div>
+
+    <!-- Page 1 -->
+    <div class="page active" id="page1">
+      <h1>謝謝大家的心意！</h1>
+      <p>我有一段話想對你說~</p>
+      <div class="hint">我始終相信每一段相遇都是緣分，各位都是我很珍惜的人。</div>
+      <div class="btns">
+        <button class="primary" id="next1">點一下</button>
+      </div>
+    </div>
+
+    <!-- Page 2 -->
+    <div class="page" id="page2">
+      <h1>小小玩笑</h1>
+      <p>你們的祝福我都收到了——<br>🧧紅包我也「用心」收到了。</p>
+      <div class="hint">真的很感謝你們。</div>
+      <div class="btns">
+        <button id="back2">上一頁</button>
+        <button class="primary" id="next2">下一頁</button>
+      </div>
+    </div>
+
+    <!-- Page 3 (Form) -->
+    <div class="page" id="page3">
+      <h1>留一段話給我吧～</h1>
+
+      <div class="row">
+        <label for="name">您的名字</label>
+        <input id="name" type="text" placeholder="請輸入名字" maxlength="50" />
+      </div>
+
+      <div class="row">
+        <label for="msg">想偷偷對我說...</label>
+        <textarea id="msg" placeholder="想說的話會被好好收藏的！" maxlength="500"></textarea>
+      </div>
+
+      <div class="btns">
+        <button id="back3">上一頁</button>
+        <button class="primary" id="submit">送出</button>
+      </div>
+
+      <div class="status" id="status"></div>
+    </div>
+
+    <!-- Page 4 (Thank you) -->
+    <div class="page" id="page4">
+      <h1>謝謝大家今天的到來與支持❤️</h1>
+      <p>您寫下的話，我已經收到了。</p>
+      <div class="hint">願我們未來都平安、順心。</div>
+    </div>
+
   </div>
 
-  <script>
-    const lines = [
-      "謝謝大家的心意🧧真的很感動。",
-      "小小玩笑：你們的祝福我都收到了——紅包我也「用心」收到了。",
-      "謝謝大家今天的到來與支持❤️"
-    ];
-    let i = 0;
-    document.getElementById("btn").addEventListener("click", () => {
-      i = (i + 1) % lines.length;
-      document.getElementById("msg").textContent = lines[i];
-    });
-  </script>
+<script>
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbzTNBK35fT82g30MphU1z3eqgJWs7PnelZoV3SqIEZcz1DzNFUoow2Zlv7i8TSDCPLugg/exec";
+
+  window.addEventListener("DOMContentLoaded", () => {
+    const pages = ["page1","page2","page3","page4"].map(id => document.getElementById(id));
+
+    const go = (n) => {
+      pages.forEach(p => p.classList.remove("active"));
+      document.getElementById("page"+n).classList.add("active");
+      window.scrollTo(0,0);
+    };
+
+    // 下一頁 / 上一頁
+    document.getElementById("next1").addEventListener("click", () => go(2));
+    document.getElementById("back2").addEventListener("click", () => go(1));
+    document.getElementById("next2").addEventListener("click", () => go(3));
+    document.getElementById("back3").addEventListener("click", () => go(2));
+
+    // 送出
+    const btnSubmit = document.getElementById("submit");
+    const statusEl = document.getElementById("status");
+
+   btnSubmit.onclick = () => {
+  const name = document.getElementById("name").value.trim();
+  const message = document.getElementById("msg").value.trim();
+
+  statusEl.textContent = "";
+  if (!name) { statusEl.textContent = "請先填寫名字。"; return; }
+  if (!message) { statusEl.textContent = "請先寫下想說的話。"; return; }
+  if (!GAS_URL) { statusEl.textContent = "尚未設定資料儲存網址。"; return; }
+
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = "已送出";
+  statusEl.textContent = "送出中…";
+
+  // 用 GET 參數寫入（透過圖片請求，較不會被瀏覽器擋）
+  const url =
+    GAS_URL +
+    "?name=" + encodeURIComponent(name) +
+    "&message=" + encodeURIComponent(message) +
+    "&ua=" + encodeURIComponent(navigator.userAgent) +
+    "&ref=" + encodeURIComponent(document.referrer || "");
+
+  const img = new Image();
+
+  // 不等 onload：先安排 0.5 秒後跳頁，避免 onload 不觸發
+  const t = setTimeout(() => {
+    // 可選：清空輸入
+    document.getElementById("name").value = "";
+    document.getElementById("msg").value = "";
+    go(4);
+  }, 500);
+
+  img.onload = () => {
+    clearTimeout(t);
+    // 可選：清空輸入
+    document.getElementById("name").value = "";
+    document.getElementById("msg").value = "";
+    go(4);
+  };
+
+  img.onerror = () => {
+    clearTimeout(t);
+    statusEl.textContent = "送出失敗：請稍後再試（可能網路或權限設定）。";
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = "送出";
+  };
+
+  // 加上 cache buster，避免瀏覽器快取造成 onload 行為異常
+  img.src = url + "&_ts=" + Date.now();
+};
+
+  });
+</script>
 </body>
 </html>
